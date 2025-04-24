@@ -304,7 +304,8 @@ class ParticleSwarmOptimization:
         if hasattr(sys, 'frozen'):
             joblib_backend = "multiprocessing"
         if joblib_backend == "loky":
-            results = Parallel(n_jobs=self.n_processes, backend=joblib_backend)(delayed(self.func)(pos) for pos in self.positions)
+            # non-ascii characters in user path could cause errors with joblib, setting temp_folder to current path, and ENSURE NO NON-ASCII CHARACTERS IN CURRENT PATH
+            results = Parallel(n_jobs=self.n_processes, backend=joblib_backend, temp_folder="./")(delayed(self.func)(pos) for pos in self.positions)
 
         if joblib_backend == "multiprocessing":
             pool = Pool(processes=self.n_processes)
