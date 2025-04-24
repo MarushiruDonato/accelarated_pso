@@ -153,8 +153,8 @@ class ParticleSwarmOptimization:
         X = np.random.uniform(self.lower_bound, self.upper_bound, (self.pop, self.dim))
         if self.ensure_decimal_digits:
             # decimal count of each dimension of the upper bound
-            # 真实的小数点位数, 如果最小速度步长为0, 则取上限的小数位数
             decimal_count = [self.get_decimal_digit(i) for i in self.min_velocity_step]
+            # round positions to minimal steps, if minimal step is 0, round to the decimal places of the upper bound
             real_decimal_count = [self.get_decimal_digit(i) if i != 0 else self.get_decimal_digit(up)
                                   for i, up in
                                   zip(self.min_velocity_step, self.upper_bound)]
@@ -257,7 +257,7 @@ class ParticleSwarmOptimization:
 
     def update_bests_single_process(self):
         """
-        get global best, single process
+        update bests, single process
         :return: global best position, global best value
         """
         iter_best_position = np.zeros(self.dim)
@@ -337,7 +337,7 @@ class ParticleSwarmOptimization:
         if self.cur_iter == 0:
             return self.upper_bound, self.lower_bound
         else:
-            # 获取当前粒子的上下边界
+            # upper bound and lower bound of current particles
             lower_bound = np.min(self.positions, axis=0)
             upper_bound = np.max(self.positions, axis=0)
             return upper_bound, lower_bound
@@ -378,7 +378,7 @@ class ParticleSwarmOptimization:
     def get_decimal_min_step(num):
         """
         the minimal step of the number
-        example:
+        for example:
             123, return 1
             0.0123, return 0.0001
         :param num: number
@@ -396,7 +396,7 @@ class ParticleSwarmOptimization:
     def get_decimal_digit(num):
         """
         get the decimal digits of the number
-        例如:
+        for example:
             0, return -1
             123, return 0
             0.0123, return 4
